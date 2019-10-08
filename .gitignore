@@ -1,0 +1,7 @@
+database_raw/
+database_serilased/
+OldThings/
+data_augmentation.ipynb
+.ipynb_checkpoints
+tensorBoard_logs/
+models/
