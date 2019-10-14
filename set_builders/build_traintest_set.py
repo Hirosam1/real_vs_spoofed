@@ -45,7 +45,7 @@ def get_imgs(vc,cascade,output, name,skip=60,max_images=1500, count= 0):
 								cv2.imwrite(this_output,face)
 								if count >= max_images:
 										return write
-										print("")
+										print("END")
 				print(f"\r\tGot {write} faces \tFrames: {read}", end="")
 				(grabbed, frame) = vc.read()
 
@@ -70,30 +70,82 @@ if __name__ == "__main__":
 	cascade = cv2.CascadeClassifier(args.c)
 	if(args.t == "train"):
 		for person in people:
-				person_imgs = 0
-				out_path = os.path.join(args.o,person)
-				os.mkdir(out_path)
-				person_path = os.path.join(args.i,person)
-				print(f"Getting {person} face photos")
-				videos = os.listdir(person_path)
-				writes = 0
-				for video in videos:
-					if video[-4:] == "face":
-						continue
-					if person_imgs >= args.l:
-						continue
-					if video[4:] == "2-1-2-1.mov" or video[4:] == "2-1-2-2.mov":
-						continue
+			person_path = os.path.join(args.i,person)
+			if os.path.isdir(person_path):
+				continue
+			person_imgs = 0
+			out_path = os.path.join(args.o,person)
+			os.mkdir(out_path)
+			print(f"Getting {person} face photos")
+			videos = os.listdir(person_path)
+			writes = 0
+			for video in videos:
+				if video[-4:] == "face":
+					continue
+				if person_imgs >= args.l:
+					continue
+				if video[4:] == "2-1-2-1.mov" or video[4:] == "2-1-2-2.mov":
+					continue
 
-					print(f"Getting video: {video[4:]}")
+				print(f"Getting video: {video[4:]}")
 
-					vc = cv2.VideoCapture(os.path.join(person_path,video))
+				vc = cv2.VideoCapture(os.path.join(person_path,video))
 
-					if not vc.isOpened():
-						print(f"Ignoring this file: {video}")
-						continue
-					writes = get_imgs(vc,cascade,out_path,video,args.s,args.l, person_imgs)
-					person_imgs += writes
+				if not vc.isOpened():
+					print(f"Ignoring this file: {video}")
+					continue
+				writes = get_imgs(vc,cascade,out_path,video,args.s,args.l, person_imgs)
+				person_imgs += writes
+
 	elif(args.t == "test"):
-		pass
+		person_imgs = 0
+		'''
+		print("Getting live")
+		for person in people:
+			person_path = os.path.join(args.i,person)
+			if person_path == "Spoof":
+				continue
+			person_imgs = 0
+			out_path = os.path.join(args.o,person)
+			live_path = os.path.join(out_path,"Live")
+			os.mkdir(out_path)
+			os.mkdir(live_path)
+			
+			print(f"Getting {person} face photos")
+			videos = os.listdir(person_path)
+			writes = 0
+			for video in videos:
+				if video[-4:] == "face":
+					continue
+				if video[4:] == "2-1-2-1.mov" or video[4:] == "2-1-2-2.mov":
+					print(f"Getting video: {video[4:]}")
+					vc = cv2.VideoCapture(os.path.join(person_path,video))
+					writes = get_imgs(vc,cascade,live_path,video,args.s,args.l, person_imgs)
+					print()
+					person_imgs += writes
+		'''
+		people = os.listdir(os.path.join(args.i,"Spoof"))
+		print("Getting Spoof")
+		for person in people:
+			print(f"Getting {person} face photos")
+			out_path = os.path.join(args.o,person)
+			spoof_path = os.path.join(out_path,"Spoof")
+			os.mkdir(spoof_path)
+			person_path = os.path.join(args.i,"Spoof",person)
+			videos = os.listdir(person_path)
+			writes = 0
+			for video in videos:
+				if video[-4:] == "face":
+					continue
+				if video[4:] == "1-3-2-1.mov" or video[4:] == "1-3-2-2.mov" or video[4:] == "2-3-2-1.mov":
+					print(f"Getting video: {video[4:]}")
+					vc = cv2.VideoCapture(os.path.join(person_path,video))
+					writes = get_imgs(vc,cascade,spoof_path,video,args.s,args.l, person_imgs)
+					print()
+					person_imgs += writes
+
+
+
+
+
 
