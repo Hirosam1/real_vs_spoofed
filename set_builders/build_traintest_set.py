@@ -23,7 +23,7 @@ def parse_args():
 		parser.add_argument("-c","--cascade", dest="c",required=True)
 		parser.add_argument("-s","--skip-frames",dest="s",default=5, type=int)
 		parser.add_argument("-r","--resize-image", dest = "r", default=[300,300],nargs=2)
-		parser.add_argument("-l","--limit-images-person-person", dest="l",default=6000, type = int)
+		parser.add_argument("-l","--limit-images-person-person", dest="l",default=999999, type = int)
 		parser.add_argument("-t","--train-or-test", dest = "t", default="train")
 
 		args = parser.parse_args()
@@ -68,11 +68,15 @@ if __name__ == "__main__":
 	args = parse_args()
 	people = os.listdir(args.i)
 	cascade = cv2.CascadeClassifier(args.c)
+	print(args.t)
 	if(args.t == "train"):
+		print("train")
 		for person in people:
+
 			person_path = os.path.join(args.i,person)
-			if os.path.isdir(person_path):
+			if person_path == "Spoof":
 				continue
+			print(person)
 			person_imgs = 0
 			out_path = os.path.join(args.o,person)
 			os.mkdir(out_path)
@@ -99,7 +103,6 @@ if __name__ == "__main__":
 
 	elif(args.t == "test"):
 		person_imgs = 0
-		'''
 		print("Getting live")
 		for person in people:
 			person_path = os.path.join(args.i,person)
@@ -123,7 +126,7 @@ if __name__ == "__main__":
 					writes = get_imgs(vc,cascade,live_path,video,args.s,args.l, person_imgs)
 					print()
 					person_imgs += writes
-		'''
+
 		people = os.listdir(os.path.join(args.i,"Spoof"))
 		print("Getting Spoof")
 		for person in people:
